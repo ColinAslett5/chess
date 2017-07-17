@@ -11,10 +11,13 @@ string Pawn(int a, int b);
 string Rook(int a, int b);
 string Bishop(int a, int b);
 string Knight(int a, int b);
+string Queen(int a, int b);
+string King(int a, int b);
 //turn calculations
 int turn = 0;//0 = white, 1 = black
+bool Kingsafe();//have to make sure the moves dont induce a check
 //global strings for notation purposes
-string letter[] = {"A","B","C","D","E","F","G","H"};//might want to make this global
+string letter[] = {"H","G","F","E","D","C","B","A"};//might want to make this global
 string number[] = {"1","2","3","4","5","6","7","8"};
 int main(){
   //initially setting all squares to NULL
@@ -53,7 +56,7 @@ void setup(){
   for(int i = 0;i < 8;i++){
     white[1][i] = 'P';
   }
-  white[0][0] = 'R';
+  white[2][0] = 'R';
   white[0][7] = 'R';
   white[0][1] = 'H';
   white[0][6] = 'H';
@@ -131,6 +134,12 @@ string move(){
       else if(white[i][b] == 'R'){
 	list = list+Rook(i,b);
       }
+      else if(white[i][b] == 'Q'){
+	list = list+Queen(i,b);
+      }
+      else if(white[i][b] == 'K'){
+	list = list+King(i,b);
+      }
     }
   }
   return list;
@@ -138,54 +147,125 @@ string move(){
 //pawn moves
 string Pawn(int a, int b){//strings need spaces when they are initialized
   string rtstr = " ";//return string
-  if(white[a+1][b] == 'x' && black[a+1][b] == 'x'){
+  if(white[a+1][b] == 'x' && black[a+1][b] == 'x' && Kingsafe()){
     //rtstr = rtstr + letter[a+1] + to_string(b);
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[a+1];
   }
-  if(white[a+2][b] == 'x' && black[a+2][b] == 'x'){
+  if(white[a+2][b] == 'x' && black[a+2][b] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[a+2];
   }
   return rtstr;
 }
 string Rook(int a, int b){
   string rtstr = " ";
-  for(int i = 0;i < 8;i++){
-    //will jump over squares
-    /*
-    //up/down squares
-    if(white[a+i][b] == 'x' && black[a+i][b] == 'x'){
-      rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[a+i];
+  //right to left
+  for(int i = b+1;i < 8;i++){
+    if(white[a][i] == 'x' && black[a][i] == 'x' && Kingsafe()){
+      rtstr = rtstr + letter[b] + number[a] + "->" + letter[i] + number[a];
     }
-    //left/right squares
-    if(white[a][b+i] == 'x' && black[a][b+i] == 'x'){
-      rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+i] + number[a];
+    else{
+      break;
     }
-    */
   }
   return rtstr;
 }
 string Bishop(int a, int b){
-  
+  string rtstr = " ";
+  return rtstr;
 }
 string Knight(int a, int b){
   string rtstr = " ";
-  if(white[a+2][b+1] == 'x' && black[a+2][b+1] == 'x'){
+  if(white[a+2][b+1] == 'x' && black[a+2][b+1] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+1] + number[a+2];
   }
-  if(white[a+2][b+1] == 'x' && black[a+2][b-1] == 'x'){
+  if(white[a+2][b+1] == 'x' && black[a+2][b-1] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-1] + number[a+2];
   }
-  if(white[a+1][b+2] == 'x' && black[a+1][b+2] == 'x'){
+  if(white[a+1][b+2] == 'x' && black[a+1][b+2] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+2] + number[a+1];
   }
-  if(white[a+1][b-2] == 'x' && black[a+1][b-2] == 'x'){
+  if(white[a+1][b-2] == 'x' && black[a+1][b-2] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-2] + number[a+1];
   }
-  if(white[a-2][b+1] == 'x' && black[a-2][b+1] == 'x'){
+  if(white[a-2][b+1] == 'x' && black[a-2][b+1] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+1] + number[a-2];
   }
-  if(white[a-2][b-1] == 'x' && black[a-2][b-1] == 'x'){
+  if(white[a-2][b-1] == 'x' && black[a-2][b-1] == 'x' && Kingsafe()){
     rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-1] + number[a-2];
   }
   return rtstr;
+}
+string Queen(int a, int b){
+  string rtstr = " ";
+  //right movement
+  for(int i = b+1;i < 8;i++){
+    if(white[a][i] == 'x' && black[a][i] == 'x' && Kingsafe()){
+      rtstr = rtstr + letter[b] + number[a] + "->" + letter[i] + number[a];
+    }
+    else{//there is a piece in the way
+      break;
+    }
+  }
+  //left movement
+  for(int i = b-1;i > -1;i--){
+    if(white[a][i] == 'x' && black[a][i] == 'x' && Kingsafe()){
+      rtstr = rtstr + letter[b] + number[a] + "->" + letter[i] + number[a];
+    }
+    else{
+      break;
+    }
+  }
+  //Up movement
+  for(int i = a+1;i < 8;i++){
+    if(white[i][b] == 'x' && black[i][b] == 'x' && Kingsafe()){
+      rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[i];
+    }
+    else{
+      break;
+    }
+  }
+  //down movement
+  for(int i = a-1;i > -1;i--){
+    if(white[i][b] == 'x' && black[i][b] == 'x' && Kingsafe()){
+      rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[i];
+    }
+    else{
+      break;
+    }
+  }
+  return rtstr;
+}
+string King(int a, int b){
+  string rtstr = " ";
+  //eight possible moves
+  if(white[a+1][b-1] == 'x' && black[a+1][b-1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-1] + number[a+1];
+  }
+  if(white[a+1][b] == 'x' && black[a+1][b] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[a+1];
+  }
+  if(white[a+1][b+1] == 'x' && black[a+1][b+1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+1] + number[a+1];
+  }
+  if(white[a][b-1] == 'x' && black[a][b-1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-1] + number[a];
+  }
+  if(white[a][b+1] == 'x' && black[a+1][b+1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+1] + number[a];
+  }
+  if(white[a-1][b-1] == 'x' && black[a-1][b-1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b-1] + number[a-1];
+  }
+  if(white[a-1][b] == 'x' && black[a-1][b] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b] + number[a-1];
+  }
+  if(white[a-1][b+1] == 'x' && black[a-1][b+1] == 'x' && Kingsafe()){
+    rtstr = rtstr + letter[b] + number[a] + "->" + letter[b+1] + number[a-1];
+  }
+  //castling also
+  return rtstr;  
+}
+//have to make sure the king is not in check when a move is made
+bool Kingsafe(){
+  return true;
 }
