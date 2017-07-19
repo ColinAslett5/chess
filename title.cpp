@@ -4,29 +4,29 @@ using namespace std;
 string board[8][8];
 int turn = 0;//0 is white, 1 is black
 void setup();
-void PossibleMoves();
 struct Node{//a new node will be put in the vector for every move possible
   int a;//original position a
   int b;//original position b
   int newa;//new a position
   int newb;//new b position
 };
-vector<Node*> list;
-void Pawn(int i,int b);
-void Rook(int i,int b);
-void Knight(int i,int b);
-void Bishop(int i,int b);
-void King(int i,int b);
-void Queen(int i,int b);
-void print();
+vector<Node*> PossibleMoves();
+//vector<Node*> list;
+void Pawn(int i,int b, vector<Node*> &list);
+void Rook(int i,int b, vector<Node*> &list);
+void Knight(int i,int b, vector<Node*> &list);
+void Bishop(int i,int b, vector<Node*> &list);
+void King(int i,int b, vector<Node*> &list);
+void Queen(int i,int b, vector<Node*> &list);
+void print(vector<Node*> list);
 int main(){
   setup();
-  PossibleMoves();
-  print();
+  //PossibleMoves();
+  print(PossibleMoves());
   return 0;
 }
 //printing out stuff for debugging purposes
-void print(){
+void print(vector<Node*> list){
   int size = list.size();
   for(int i = 0;i < size;i++){
     cout << list[i]->a << list[i]->b << list[i]->newa << list[i]->newb << endl;
@@ -47,7 +47,7 @@ void setup(){
   board[0][1] = "K";
   board[0][2] = "B";
   board[0][3] = "Q";
-  board[2][4] = "A";
+  board[0][4] = "A";
   board[0][5] = "B";
   board[0][6] = "K";
   board[0][7] = "R";
@@ -64,7 +64,8 @@ void setup(){
   board[6][6] = "k";
   board[6][7] = "r";
 }
-void PossibleMoves(){
+vector<Node*> PossibleMoves(){
+  vector<Node*> list;
   for(int i = 0;i < 8;i++){
     for(int b = 0;b < 8;b++){
       if(turn == 0){
@@ -81,10 +82,10 @@ void PossibleMoves(){
 	  //Queen(i,b);
 	}
 	if(board[i][b] == "A"){
-	  King(i,b);
+	  //King(i,b);
 	}
 	if(board[i][b] == "P"){
-	  //Pawn(i,b);
+	  Pawn(i,b,list);
 	}
       }
       else{//blacks turn
@@ -92,9 +93,10 @@ void PossibleMoves(){
       }
     }
   }
+  return list;
 }
 //pawn possible move
-void Pawn(int a, int b){
+void Pawn(int a, int b, vector<Node*> &list){
   if(board[a+1][b] == "x"){
     Node* name = new Node();
     name->a = a;
@@ -130,7 +132,7 @@ void Pawn(int a, int b){
   }
 }
 //King moving
-void King(int a,int b){
+void King(int a,int b, vector<Node*> &list){
   if(board[a+1][b-1] == "x"){
     Node* name = new Node();
     name->a = a;
@@ -171,30 +173,144 @@ void King(int a,int b){
     name->newb = b+1;
     list.push_back(name);
   }
-  if(board[a-1][b-1] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-1;
-    name->newb = b-1;
-    list.push_back(name);
+  if(a-1 > -1 && b-1 > -1){
+    if(board[a-1][b-1] == "x"){
+      Node* name = new Node();
+      name->a = a;
+      name->b = b;
+      name->newa = a-1;
+      name->newb = b-1;
+      list.push_back(name);
+    }
   }
-  if(board[a-1][b] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-1;
-    name->newb = b;
-    list.push_back(name);
+  if(a-1 > -1){
+    if(board[a-1][b] == "x"){
+      Node* name = new Node();
+      name->a = a;
+      name->b = b;
+      name->newa = a-1;
+      name->newb = b;
+      list.push_back(name);
+    }
   }
-  if(board[a-1][b+1] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-1;
-    name->newb = b+1;
-    list.push_back(name);
+  if(a-1 > -1 && b+1 < 8){
+    if(board[a-1][b+1] == "x"){
+      Node* name = new Node();
+      name->a = a;
+      name->b = b;
+      name->newa = a-1;
+      name->newb = b+1;
+      list.push_back(name);
+    }
   }
   //castling and captures and kingcheck
 }
-
+//moves for the knight
+void Knight(int a,int b, vector<Node*> &list){
+  if(board[a+2][b-1] == "x" && a+2 < 8 && b-1 > -1){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a+2;
+    name->newb = b-1;
+    list.push_back(name);
+  }
+  if(board[a+2][b+1] == "x" && a+2 < 8 && b+1 < 8){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a+2;
+    name->newb = b+1;
+    list.push_back(name);
+  }
+  if(board[a+1][b-2] == "x" && a+1 < 8 && b-2 > -1){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a+1;
+    name->newb = b-2;
+    list.push_back(name);
+  }
+  if(board[a+1][b+2] == "x" && a+1 < 8 && b+2 < 8){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a+1;
+    name->newb = b+2;
+    list.push_back(name);
+  }
+  //below
+  /*
+  if(board[a-2][b-1] == "x"){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a-2;
+    name->newb = b-1;
+    list.push_back(name);
+  }
+  if(board[a-2][b+1] == "x"){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a-2;
+    name->newb = b+1;
+    list.push_back(name);
+  }
+  if(board[a-1][b-2] == "x"){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a-1;
+    name->newb = b-2;
+    list.push_back(name);
+  }
+  if(board[a-1][b+2] == "x"){
+    Node* name = new Node();
+    name->a = a;
+    name->b = b;
+    name->newa = a-1;
+    name->newb = b-2;
+    list.push_back(name);
+  }
+  */
+}
+//Rook movement
+void Rook(int a, int b, vector<Node*> &list){
+  //up
+  for(int i = 1;i < 8;i++){
+    if(a+i == 8){
+      break;
+    }
+    if(board[a+i][b] == "x"){
+      Node* name = new Node();
+      name->a = a;
+      name->b = b;
+      name->newa = a+i;
+      name->newb = b;
+      list.push_back(name);
+    }
+    else{
+      break;
+    }
+    //else if(){} if it is a enemy piece then we can take it
+  }
+  //down
+  for(int i = 1;i < 8;i++){
+    if(a-i == -1){
+      break;
+    }
+    if(board[a-i][b] == "x"){
+      Node* name = new Node();
+      name->a = a;
+      name->b = b;
+      name->newa = a-i;
+      name->newb = b;
+      list.push_back(name);
+    }
+    else{
+      break;
+    }
+  }
+  //left and right
+}
