@@ -19,7 +19,7 @@ void Bishop(int i,int b, vector<Node*> &list);
 void King(int i,int b, vector<Node*> &list);
 void Queen(int i,int b, vector<Node*> &list);
 void print(vector<Node*> list);
-bool KingSafe();
+bool KingSafe(int a, int b, int c, int d);
 void MakeMove(int a, int b, int c, int d);//makes the move
 void UndoMove(int a, int b, int c, int d);//undo's the last move
 void Outlay();//prints out the board
@@ -62,7 +62,7 @@ void UndoMove(int a, int b, int c, int d){
   board[c][d] = "x";
 }
 //is the king going to be in check
-bool KingSafe(){
+bool KingSafe(int a, int b, int c, int d){
   if(turn == 0){}
   else if(turn == 1){}
   return true;
@@ -148,9 +148,9 @@ vector<Node*> PossibleMoves(){
   return list;
 }
 //COMPELTED
-void Pawn(int a, int b, vector<Node*> &list){
+void Pawn(int a, int b, vector<Node*> &list){//Have to Do Promotion
   if(turn == 0){
-    if(board[a+1][b] == "x" && KingSafe()){
+    if(board[a+1][b] == "x" && KingSafe(a,b,a+1,b)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -158,7 +158,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       name->newb = b;
       list.push_back(name);
     }
-    if(board[a+2][b] == "x" && board[a+1][b] == "x" && KingSafe()){
+    if(board[a+2][b] == "x" && board[a+1][b] == "x" && KingSafe(a,b,a+2,b)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -167,7 +167,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       list.push_back(name);
     }
     //also captures, two diagonals
-    if((board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe()){
+    if((board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe(a,b,a+1,b-1)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -175,7 +175,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       name->newb = b-1;
       list.push_back(name);
     }
-    if((board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe()){
+    if((board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe(a,b,a+1,b-1)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -185,7 +185,7 @@ void Pawn(int a, int b, vector<Node*> &list){
     }
   }
   else if(turn == 1){
-    if(board[a-1][b] == "x" && KingSafe()){
+    if(board[a-1][b] == "x" && KingSafe(a,b,a-1,b)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -193,7 +193,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       name->newb = b;
       list.push_back(name);
     }
-    if(board[a-2][b] == "x" && KingSafe()){
+    if(board[a-2][b] == "x" && KingSafe(a,b,a-2,b)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -201,7 +201,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       name->newb = b;
       list.push_back(name);
     }
-    if((board[a-1][b-1] == "P" || board[a-1][b-1] == "R" || board[a-1][b-1] == "B" || board[a-1][b-1] == "K" || board[a-1][b-1] == "Q") && KingSafe()){
+    if((board[a-1][b-1] == "P" || board[a-1][b-1] == "R" || board[a-1][b-1] == "B" || board[a-1][b-1] == "K" || board[a-1][b-1] == "Q") && KingSafe(a,b,a-1,b-1)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -209,7 +209,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       name->newb = b-1;
       list.push_back(name);
     }
-    if((board[a-1][b+1] == "P" || board[a-1][b+1] == "R" || board[a-1][b+1] == "B" || board[a-1][b+1] == "K" || board[a-1][b+1] == "Q") && KingSafe()){
+    if((board[a-1][b+1] == "P" || board[a-1][b+1] == "R" || board[a-1][b+1] == "B" || board[a-1][b+1] == "K" || board[a-1][b+1] == "Q") && KingSafe(a,b,a-1,b+1)){
       Node* name = new Node();
       name->a = a;
       name->b = b;
@@ -223,7 +223,7 @@ void Pawn(int a, int b, vector<Node*> &list){
 void King(int a,int b, vector<Node*> &list){
   if(turn == 0){
     if(a+1 < 8 && b-1 > -1){
-      if((board[a+1][b-1] == "x" || board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe()){
+      if((board[a+1][b-1] == "x" || board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe(a,b,a+1,b-1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -233,7 +233,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8){
-      if((board[a+1][b] == "x" || board[a+1][b] == "p" || board[a+1][b] == "r" || board[a+1][b] == "b" || board[a+1][b] == "k" || board[a+1][b] == "q") && KingSafe()){
+      if((board[a+1][b] == "x" || board[a+1][b] == "p" || board[a+1][b] == "r" || board[a+1][b] == "b" || board[a+1][b] == "k" || board[a+1][b] == "q") && KingSafe(a,b,a+1,b)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -243,7 +243,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8 && b+1 < 8){
-      if((board[a+1][b+1] == "x" || board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe()){
+      if((board[a+1][b+1] == "x" || board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe(a,b,a+1,b+1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -253,7 +253,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(b-1 > -1){
-      if((board[a][b-1] == "x" || board[a][b-1] == "p" || board[a][b-1] == "r" || board[a][b-1] == "b" || board[a][b-1] == "k" || board[a][b-1] == "q") && KingSafe()){
+      if((board[a][b-1] == "x" || board[a][b-1] == "p" || board[a][b-1] == "r" || board[a][b-1] == "b" || board[a][b-1] == "k" || board[a][b-1] == "q") && KingSafe(a,b,a,b-1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -263,7 +263,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(b+1 < 8){
-      if((board[a][b+1] == "x" || board[a][b+1] == "p" || board[a][b+1] == "r" || board[a][b+1] == "b" || board[a][b+1] == "k" || board[a][b+1] == "q") && KingSafe()){
+      if((board[a][b+1] == "x" || board[a][b+1] == "p" || board[a][b+1] == "r" || board[a][b+1] == "b" || board[a][b+1] == "k" || board[a][b+1] == "q") && KingSafe(a,b,a,b+1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -273,7 +273,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b-1 > -1){
-      if((board[a-1][b-1] == "x" || board[a-1][b-1] == "p" || board[a-1][b-1] == "r" || board[a-1][b-1] == "b" || board[a-1][b-1] == "k" || board[a-1][b-1] == "q") && KingSafe()){
+      if((board[a-1][b-1] == "x" || board[a-1][b-1] == "p" || board[a-1][b-1] == "r" || board[a-1][b-1] == "b" || board[a-1][b-1] == "k" || board[a-1][b-1] == "q") && KingSafe(a,b,a-1,b-1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -283,7 +283,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1){
-      if((board[a-1][b] == "x" || board[a-1][b] == "p" || board[a-1][b] == "r" || board[a-1][b] == "b" || board[a-1][b] == "k" || board[a-1][b] == "q") && KingSafe()){
+      if((board[a-1][b] == "x" || board[a-1][b] == "p" || board[a-1][b] == "r" || board[a-1][b] == "b" || board[a-1][b] == "k" || board[a-1][b] == "q") && KingSafe(a,b,a-1,b)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -293,7 +293,7 @@ void King(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b+1 < 8){
-      if((board[a-1][b+1] == "x" || board[a-1][b+1] == "p" || board[a-1][b+1] == "r" || board[a-1][b+1] == "b" || board[a-1][b+1] == "k" || board[a-1][b+1] == "q") && KingSafe()){
+      if((board[a-1][b+1] == "x" || board[a-1][b+1] == "p" || board[a-1][b+1] == "r" || board[a-1][b+1] == "b" || board[a-1][b+1] == "k" || board[a-1][b+1] == "q") && KingSafe(a,b,a-1,b+1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -312,7 +312,7 @@ void King(int a,int b, vector<Node*> &list){
 void Knight(int a,int b, vector<Node*> &list){
   if(turn == 0){
     if(a+2 < 8 && b-1 > -1){
-      if((board[a+2][b-1] == "x" || board[a+2][b-1] == "p" || board[a+2][b-1] == "r" || board[a+2][b-1] == "b" || board[a+2][b-1] == "k" || board[a+2][b-1] == "q") && KingSafe()){
+      if((board[a+2][b-1] == "x" || board[a+2][b-1] == "p" || board[a+2][b-1] == "r" || board[a+2][b-1] == "b" || board[a+2][b-1] == "k" || board[a+2][b-1] == "q") && KingSafe(a,b,a+2,b-1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -322,7 +322,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+2 < 8 && b+1 < 8){
-      if((board[a+2][b+1] == "x" || board[a+2][b+1] == "p" || board[a+2][b+1] == "r" || board[a+2][b+1] == "b" || board[a+2][b+1] == "k" || board[a+2][b+1] == "q") && KingSafe()){
+      if((board[a+2][b+1] == "x" || board[a+2][b+1] == "p" || board[a+2][b+1] == "r" || board[a+2][b+1] == "b" || board[a+2][b+1] == "k" || board[a+2][b+1] == "q") && KingSafe(a,b,a+2,b+1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -332,7 +332,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8 && b-2 > -1){
-      if((board[a+1][b-2] == "x" || board[a+1][b-2] == "p" || board[a+1][b-2] == "r" || board[a+1][b-2] == "b" || board[a+1][b-2] == "k" || board[a+1][b-2] == "q") && KingSafe()){
+      if((board[a+1][b-2] == "x" || board[a+1][b-2] == "p" || board[a+1][b-2] == "r" || board[a+1][b-2] == "b" || board[a+1][b-2] == "k" || board[a+1][b-2] == "q") && KingSafe(a,b,a+1,b-2)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -342,7 +342,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8 && b+2 < 8){
-      if((board[a+1][b+2] == "x" || board[a+1][b+2] == "p" || board[a+1][b+2] == "r" || board[a+1][b+2] == "b" || board[a+1][b+2] == "k" || board[a+1][b+2] == "q") && KingSafe()){
+      if((board[a+1][b+2] == "x" || board[a+1][b+2] == "p" || board[a+1][b+2] == "r" || board[a+1][b+2] == "b" || board[a+1][b+2] == "k" || board[a+1][b+2] == "q") && KingSafe(a,b,a+1,b+2)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -353,7 +353,7 @@ void Knight(int a,int b, vector<Node*> &list){
     }
     //half
     if(a-2 > -1 && b-1 > -1){
-      if((board[a-2][b-1] == "x" || board[a-2][b-1] == "p" || board[a-2][b-1] == "r" || board[a-2][b-1] == "b" || board[a-2][b-1] == "k" || board[a-2][b-1] == "q") && KingSafe()){
+      if((board[a-2][b-1] == "x" || board[a-2][b-1] == "p" || board[a-2][b-1] == "r" || board[a-2][b-1] == "b" || board[a-2][b-1] == "k" || board[a-2][b-1] == "q") && KingSafe(a,b,a-2,b-1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -363,7 +363,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-2 > -1 && b+1 < 8){
-      if((board[a-2][b+1] == "x" || board[a-2][b+1] == "p" || board[a-2][b+1] == "r" || board[a-2][b+1] == "b" || board[a-2][b+1] == "k" || board[a-2][b+1] == "q") && KingSafe()){
+      if((board[a-2][b+1] == "x" || board[a-2][b+1] == "p" || board[a-2][b+1] == "r" || board[a-2][b+1] == "b" || board[a-2][b+1] == "k" || board[a-2][b+1] == "q") && KingSafe(a,b,a-2,b+1)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -373,7 +373,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b-2 > -1){
-      if((board[a-1][b-2] == "x" || board[a-1][b-2] == "p" || board[a-1][b-2] == "r" || board[a-1][b-2] == "b" || board[a-1][b-2] == "k" || board[a-1][b-2] == "q") && KingSafe()){
+      if((board[a-1][b-2] == "x" || board[a-1][b-2] == "p" || board[a-1][b-2] == "r" || board[a-1][b-2] == "b" || board[a-1][b-2] == "k" || board[a-1][b-2] == "q") && KingSafe(a,b,a-1,b-2)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -383,7 +383,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b+2 < 8){
-      if((board[a-1][b+2] == "x" || board[a-1][b+2] == "p" || board[a-1][b+2] == "r" || board[a-1][b+2] == "b" || board[a-1][b+2] == "k" || board[a-1][b+2] == "q") && KingSafe()){
+      if((board[a-1][b+2] == "x" || board[a-1][b+2] == "p" || board[a-1][b+2] == "r" || board[a-1][b+2] == "b" || board[a-1][b+2] == "k" || board[a-1][b+2] == "q") && KingSafe(a,b,a-1,b+2)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -396,7 +396,7 @@ void Knight(int a,int b, vector<Node*> &list){
   //for black pieces
   else if(turn == 1){
     if(a+2 < 8 && b-1 > -1){
-      if((board[a+2][b-1] == "x" || board[a+2][b-1] == "P" || board[a+2][b-1] == "R" || board[a+2][b-1] == "B" || board[a+2][b-1] == "K" || board[a+2][b-1] == "Q") && KingSafe()){
+      if((board[a+2][b-1] == "x" || board[a+2][b-1] == "P" || board[a+2][b-1] == "R" || board[a+2][b-1] == "B" || board[a+2][b-1] == "K" || board[a+2][b-1] == "Q") && KingSafe(a,b,a+2,b-1)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -406,7 +406,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+2 < 8 && b+1 < 8){
-      if((board[a+2][b+1] == "x" || board[a+2][b+1] == "P" || board[a+2][b+1] == "R" || board[a+2][b+1] == "B" || board[a+2][b+1] == "K" || board[a+2][b+1] == "Q") && KingSafe()){
+      if((board[a+2][b+1] == "x" || board[a+2][b+1] == "P" || board[a+2][b+1] == "R" || board[a+2][b+1] == "B" || board[a+2][b+1] == "K" || board[a+2][b+1] == "Q") && KingSafe(a,b,a+2,b+1)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -416,7 +416,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8 && b-2 > -1){
-      if((board[a+1][b-2] == "x" || board[a+1][b-2] == "P" || board[a+1][b-2] == "R" || board[a+1][b-2] == "B" || board[a+1][b-2] == "K" || board[a+1][b-2] == "Q") && KingSafe()){
+      if((board[a+1][b-2] == "x" || board[a+1][b-2] == "P" || board[a+1][b-2] == "R" || board[a+1][b-2] == "B" || board[a+1][b-2] == "K" || board[a+1][b-2] == "Q") && KingSafe(a,b,a+1,b-2)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -426,7 +426,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a+1 < 8 && b+2 < 8){
-      if((board[a+1][b+2] == "x" || board[a+1][b+2] == "P" || board[a+1][b+2] == "R" || board[a+1][b+2] == "B" || board[a+1][b+2] == "K" || board[a+1][b+2] == "Q") && KingSafe()){
+      if((board[a+1][b+2] == "x" || board[a+1][b+2] == "P" || board[a+1][b+2] == "R" || board[a+1][b+2] == "B" || board[a+1][b+2] == "K" || board[a+1][b+2] == "Q") && KingSafe(a,b,a+1,b+2)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -437,7 +437,7 @@ void Knight(int a,int b, vector<Node*> &list){
     }
     //half
     if(a-2 > -1 && b-1 > -1){
-      if((board[a-2][b-1] == "x" || board[a-2][b-1] == "P" || board[a-2][b-1] == "R" || board[a-2][b-1] == "B" || board[a-2][b-1] == "K" || board[a-2][b-1] == "Q") && KingSafe()){
+      if((board[a-2][b-1] == "x" || board[a-2][b-1] == "P" || board[a-2][b-1] == "R" || board[a-2][b-1] == "B" || board[a-2][b-1] == "K" || board[a-2][b-1] == "Q") && KingSafe(a,b,a-2,b-1)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -447,7 +447,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-2 > -1 && b+1 < 8){
-      if((board[a-2][b+1] == "x" || board[a-2][b+1] == "P" || board[a-2][b+1] == "R" || board[a-2][b+1] == "B" || board[a-2][b+1] == "K" || board[a-2][b+1] == "Q") && KingSafe()){
+      if((board[a-2][b+1] == "x" || board[a-2][b+1] == "P" || board[a-2][b+1] == "R" || board[a-2][b+1] == "B" || board[a-2][b+1] == "K" || board[a-2][b+1] == "Q") && KingSafe(a,b,a-2,b+1)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -457,7 +457,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b-2 > -1){
-      if((board[a-1][b-2] == "x" || board[a-1][b-2] == "P" || board[a-1][b-2] == "R" || board[a-1][b-2] == "B" || board[a-1][b-2] == "K" || board[a-1][b-2] == "Q") && KingSafe()){
+      if((board[a-1][b-2] == "x" || board[a-1][b-2] == "P" || board[a-1][b-2] == "R" || board[a-1][b-2] == "B" || board[a-1][b-2] == "K" || board[a-1][b-2] == "Q") && KingSafe(a,b,a-1,b-2)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -467,7 +467,7 @@ void Knight(int a,int b, vector<Node*> &list){
       }
     }
     if(a-1 > -1 && b+2 < 8){
-      if((board[a-1][b+2] == "x" || board[a-1][b+2] == "P" || board[a-1][b+2] == "R" || board[a-1][b+2] == "B" || board[a-1][b+2] == "K" || board[a-1][b+2] == "Q") && KingSafe()){
+      if((board[a-1][b+2] == "x" || board[a-1][b+2] == "P" || board[a-1][b+2] == "R" || board[a-1][b+2] == "B" || board[a-1][b+2] == "K" || board[a-1][b+2] == "Q") && KingSafe(a,b,a-1,b+2)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -486,7 +486,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(a+i == 8){
 	break;
       }
-      if((board[a+i][b] == "x" || board[a+i][b] == "p" || board[a+1][b] == "r" || board[a+i][b] == "b" || board[a+i][b] == "k" || board[a+i][b] == "q") && KingSafe()){
+      if((board[a+i][b] == "x" || board[a+i][b] == "p" || board[a+1][b] == "r" || board[a+i][b] == "b" || board[a+i][b] == "k" || board[a+i][b] == "q") && KingSafe(a,b,a+i,b)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -497,14 +497,13 @@ void Rook(int a, int b, vector<Node*> &list){
       else{
 	break;
       }
-      //else if(){} if it is a enemy piece then we can take it
     }
     //down
     for(int i = 1;i < 8;i++){
       if(a-i == -1){
 	break;
       }
-      if((board[a-i][b] == "x" || board[a-i][b] == "p" || board[a-1][b] == "r" || board[a-i][b] == "b" || board[a-i][b] == "k" || board[a-i][b] == "q") && KingSafe()){
+      if((board[a-i][b] == "x" || board[a-i][b] == "p" || board[a-1][b] == "r" || board[a-i][b] == "b" || board[a-i][b] == "k" || board[a-i][b] == "q") && KingSafe(a,b,a-i,b)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -521,7 +520,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(b+i == 8){
 	break;
       }
-      if((board[a][b+i] == "x" || board[a][b+i] == "p" || board[a][b+i] == "r" || board[a][b+i] == "b" || board[a][b+i] == "k" || board[a][b+i] == "q") && KingSafe()){
+      if((board[a][b+i] == "x" || board[a][b+i] == "p" || board[a][b+i] == "r" || board[a][b+i] == "b" || board[a][b+i] == "k" || board[a][b+i] == "q") && KingSafe(a,b,a,b+i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -537,7 +536,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(b-i == -1){
 	break;
       }
-      if((board[a][b-i] == "x" || board[a][b-i] == "p" || board[a][b-i] == "r" || board[a][b-i] == "b" || board[a][b-i] == "k" || board[a][b-i] == "q") && KingSafe()){
+      if((board[a][b-i] == "x" || board[a][b-i] == "p" || board[a][b-i] == "r" || board[a][b-i] == "b" || board[a][b-i] == "k" || board[a][b-i] == "q") && KingSafe(a,b,a,b-i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -556,7 +555,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(a+i == 8){
         break;
       }
-      if((board[a+i][b] == "x" || board[a+i][b] == "P" || board[a+1][b] == "R" || board[a+i][b] == "B" || board[a+i][b] == "K" || board[a+i][b] == "Q") && KingSafe()){
+      if((board[a+i][b] == "x" || board[a+i][b] == "P" || board[a+1][b] == "R" || board[a+i][b] == "B" || board[a+i][b] == "K" || board[a+i][b] == "Q") && KingSafe(a,b,a+i,b)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -574,7 +573,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(a-i == -1){
         break;
       }
-      if((board[a-i][b] == "x" || board[a-i][b] == "P" || board[a-1][b] == "R" || board[a-i][b] == "B" || board[a-i][b] == "K" || board[a-i][b] == "Q") && KingSafe()){
+      if((board[a-i][b] == "x" || board[a-i][b] == "P" || board[a-1][b] == "R" || board[a-i][b] == "B" || board[a-i][b] == "K" || board[a-i][b] == "Q") && KingSafe(a,b,a-i,b)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -591,7 +590,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(b+i == 8){
         break;
       }
-      if((board[a][b+i] == "x" || board[a][b+i] == "P" || board[a][b+i] == "R" || board[a][b+i] == "B" || board[a][b+i] == "K" || board[a][b+i] == "Q") && KingSafe()){
+      if((board[a][b+i] == "x" || board[a][b+i] == "P" || board[a][b+i] == "R" || board[a][b+i] == "B" || board[a][b+i] == "K" || board[a][b+i] == "Q") && KingSafe(a,b,a,b+i)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -607,7 +606,7 @@ void Rook(int a, int b, vector<Node*> &list){
       if(b-i == -1){
         break;
       }
-      if((board[a][b-i] == "x" || board[a][b-i] == "P" || board[a][b-i] == "R" || board[a][b-i] == "B" || board[a][b-i] == "K" || board[a][b-i] == "Q") && KingSafe()){
+      if((board[a][b-i] == "x" || board[a][b-i] == "P" || board[a][b-i] == "R" || board[a][b-i] == "B" || board[a][b-i] == "K" || board[a][b-i] == "Q") && KingSafe(a,b,a,b-i)){
         Node* name = new Node();
         name->a = a;
         name->b = b;
@@ -621,7 +620,7 @@ void Rook(int a, int b, vector<Node*> &list){
     }
   }
 }
-//bishop possible moves
+//COMPLETED
 void Bishop(int a, int b, vector<Node*> &list){
   if(turn == 0){
     //up diagonals
@@ -629,7 +628,7 @@ void Bishop(int a, int b, vector<Node*> &list){
       if((a+i == 8) || (b+i == 8)){
 	break;
       }
-      if((board[a+i][b+i] == "x" || board[a+i][b+i] == "p" || board[a+i][b+i] == "r" || board[a+i][b+i] == "b" || board[a+i][b+i] == "k" || board[a+i][b+i] == "q") && KingSafe()){
+      if((board[a+i][b+i] == "x" || board[a+i][b+i] == "p" || board[a+i][b+i] == "r" || board[a+i][b+i] == "b" || board[a+i][b+i] == "k" || board[a+i][b+i] == "q") && KingSafe(a,b,a+i,b+i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -645,7 +644,7 @@ void Bishop(int a, int b, vector<Node*> &list){
       if((a+i == 8) || (b-i == -1)){
 	break;
       }
-      if((board[a+i][b-i] == "x" || board[a+i][b-i] == "p" || board[a+i][b-i] == "r" || board[a+i][b-i] == "b" || board[a+i][b-i] == "k" || board[a+i][b-i] == "q") && KingSafe()){
+      if((board[a+i][b-i] == "x" || board[a+i][b-i] == "p" || board[a+i][b-i] == "r" || board[a+i][b-i] == "b" || board[a+i][b-i] == "k" || board[a+i][b-i] == "q") && KingSafe(a,b,a+i,b-i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -662,7 +661,7 @@ void Bishop(int a, int b, vector<Node*> &list){
       if((a-i == -1) || (b+i == 8)){
 	break;
       }
-      if((board[a-i][b+i] == "x" || board[a-i][b+i] == "p" || board[a-i][b+i] == "r" || board[a-i][b+i] == "b" || board[a-i][b+i] == "k" || board[a-i][b+i] == "q") && KingSafe()){
+      if((board[a-i][b+i] == "x" || board[a-i][b+i] == "p" || board[a-i][b+i] == "r" || board[a-i][b+i] == "b" || board[a-i][b+i] == "k" || board[a-i][b+i] == "q") && KingSafe(a,b,a-i,b+i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -678,7 +677,7 @@ void Bishop(int a, int b, vector<Node*> &list){
       if((a-i == -1) || (b-i == -1)){
 	break;
       }
-      if((board[a-i][b-i] == "x" || board[a-i][b-i] == "p" || board[a-i][b-i] == "r" || board[a-i][b-i] == "b" || board[a-i][b-i] == "k" || board[a-i][b-i] == "q") && KingSafe()){
+      if((board[a-i][b-i] == "x" || board[a-i][b-i] == "p" || board[a-i][b-i] == "r" || board[a-i][b-i] == "b" || board[a-i][b-i] == "k" || board[a-i][b-i] == "q") && KingSafe(a,b,a-i,b-i)){
 	Node* name = new Node();
 	name->a = a;
 	name->b = b;
@@ -692,7 +691,72 @@ void Bishop(int a, int b, vector<Node*> &list){
     }
   }
   else if(turn == 1){
-    
+    //up diagonals
+    for(int i = 1;i < 8;i++){
+      if((a+i == 8) || (b+i == 8)){
+        break;
+      }
+      if((board[a+i][b+i] == "x" || board[a+i][b+i] == "P" || board[a+i][b+i] == "R" || board[a+i][b+i] == "B" || board[a+i][b+i] == "K" || board[a+i][b+i] == "Q") && KingSafe(a,b,a+i,b+i)){
+        Node* name = new Node();
+        name->a = a;
+        name->b = b;
+        name->newa = a+i;
+        name->newb = b+i;
+        list.push_back(name);
+      }
+      else{
+        break;
+      }
+    }
+    for(int i = 1;i < 8;i++){
+      if((a+i == 8) || (b-i == -1)){
+        break;
+      }
+      if((board[a+i][b-i] == "x" || board[a+i][b-i] == "P" || board[a+i][b-i] == "R" || board[a+i][b-i] == "B" || board[a+i][b-i] == "K" || board[a+i][b-i] == "Q") && KingSafe(a,b,a+i,b-i)){
+        Node* name = new Node();
+        name->a = a;
+        name->b = b;
+        name->newa = a+i;
+        name->newb = b-i;
+        list.push_back(name);
+      }
+      else{
+        break;
+      }
+    }
+    //downward diagonals
+    for(int i = 1;i < 8;i++){
+      if((a-i == -1) || (b+i == 8)){
+        break;
+      }
+      if((board[a-i][b+i] == "x" || board[a-i][b+i] == "P" || board[a-i][b+i] == "R" || board[a-i][b+i] == "B" || board[a-i][b+i] == "K" || board[a-i][b+i] == "Q") && KingSafe(a,b,a-i,b+i)){
+        Node* name = new Node();
+        name->a = a;
+        name->b = b;
+        name->newa = a-i;
+        name->newb = b+i;
+        list.push_back(name);
+      }
+      else{
+        break;
+      }
+    }
+    for(int i = 1;i < 8;i++){
+      if((a-i == -1) || (b-i == -1)){
+        break;
+      }
+      if((board[a-i][b-i] == "x" || board[a-i][b-i] == "P" || board[a-i][b-i] == "R" || board[a-i][b-i] == "B" || board[a-i][b-i] == "K" || board[a-i][b-i] == "Q") && KingSafe(a,b,a-i,b-i)){
+        Node* name = new Node();
+        name->a = a;
+        name->b = b;
+        name->newa = a-i;
+        name->newb = b-i;
+        list.push_back(name);
+      }
+      else{
+        break;
+      }
+    }
   }
 }
 //queen movements
