@@ -20,10 +20,14 @@ void King(int i,int b, vector<Node*> &list);
 void Queen(int i,int b, vector<Node*> &list);
 void print(vector<Node*> list);
 bool KingSafe();
+void MakeMove(int a, int b, int c, int d);//makes the move
+void UndoMove(int a, int b, int c, int d);//undo's the last move
+void Outlay();//prints out the board
 int main(){
   setup();
   //PossibleMoves();
   print(PossibleMoves());
+  Outlay();
   return 0;
 }
 //printing out stuff for debugging purposes
@@ -31,7 +35,29 @@ void print(vector<Node*> list){
   int size = list.size();
   for(int i = 0;i < size;i++){
     cout << list[i]->a << list[i]->b << list[i]->newa << list[i]->newb << endl;
+    MakeMove(list[i]->a,list[i]->b,list[i]->newa,list[i]->newb);
+    UndoMove(list[i]->a,list[i]->b,list[i]->newa,list[i]->newb);
   }
+}
+//prints out the board
+void Outlay(){
+  for(int i = 8;i > 0;i--){
+    cout << i;
+    for(int b = 0;b < 8;b++){
+      cout << board[i-1][b];
+    }
+    cout << endl;
+  }
+}
+//makes the move
+void MakeMove(int a, int b, int c, int d){
+  board[c][d] = board[a][b];
+  board[a][b] = "x";
+}
+//undo's the MakeMove function
+void UndoMove(int a, int b, int c, int d){
+  board[a][b] = board[c][d];
+  board[c][d] = "x";
 }
 //is the king going to be in check
 bool KingSafe(){
@@ -54,7 +80,7 @@ void setup(){
   board[0][1] = "K";
   board[0][2] = "B";
   board[0][3] = "Q";
-  board[5][4] = "A";
+  board[0][4] = "A";
   board[0][5] = "B";
   board[0][6] = "K";
   board[0][7] = "R";
@@ -89,20 +115,37 @@ vector<Node*> PossibleMoves(){
 	  //Queen(i,b,list);
 	}
 	if(board[i][b] == "A"){
-	  King(i,b,list);
+	  //King(i,b,list);
 	}
 	if(board[i][b] == "P"){
 	  //Pawn(i,b,list);
 	}
       }
-      else{//blacks turn
-	
+      else if(turn == 1){//blacks turn
+        if(board[i][b] == "r"){
+          //Rook(i,b,list);
+        }
+        if(board[i][b] == "k"){
+          //Knight(i,b,list);
+        }
+        if(board[i][b] == "b"){
+          //Bishop(i,b,list);
+        }
+        if(board[i][b] == "q"){
+          //Queen(i,b,list);
+        }
+        if(board[i][b] == "a"){
+          //King(i,b,list);
+        }
+        if(board[i][b] == "p"){
+          //Pawn(i,b,list);
+        }
       }
     }
   }
   return list;
 }
-//pawn possible move
+//COMPELTED
 void Pawn(int a, int b, vector<Node*> &list){
   if(turn == 0){
     if(board[a+1][b] == "x" && KingSafe()){
@@ -144,7 +187,7 @@ void Pawn(int a, int b, vector<Node*> &list){
       Node* name = new Node();
       name->a = a;
       name->b = b;
-      name->newa = a-2;
+      name->newa = a-1;
       name->newb = b;
       list.push_back(name);
     }
@@ -174,238 +217,258 @@ void Pawn(int a, int b, vector<Node*> &list){
     }
   }
 }
-//King moving
+//JUST NEED FOR BLACK PIECES
 void King(int a,int b, vector<Node*> &list){
-  if(a+1 < 8 && b-1 > -1){
-    if((board[a+1][b-1] == "x" || board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+1;
-      name->newb = b-1;
-      list.push_back(name);
+  if(turn == 0){
+    if(a+1 < 8 && b-1 > -1){
+      if((board[a+1][b-1] == "x" || board[a+1][b-1] == "p" || board[a+1][b-1] == "r" || board[a+1][b-1] == "b" || board[a+1][b-1] == "k" || board[a+1][b-1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+1;
+	name->newb = b-1;
+	list.push_back(name);
+      }
+    }
+    if(a+1 < 8){
+      if((board[a+1][b] == "x" || board[a+1][b] == "p" || board[a+1][b] == "r" || board[a+1][b] == "b" || board[a+1][b] == "k" || board[a+1][b] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+1;
+	name->newb = b;
+	list.push_back(name);
+      }
+    }
+    if(a+1 < 8 && b+1 < 8){
+      if((board[a+1][b+1] == "x" || board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+1;
+	name->newb = b+1;
+	list.push_back(name);
+      }
+    }
+    if(b-1 > -1){
+      if((board[a][b-1] == "x" || board[a][b-1] == "p" || board[a][b-1] == "r" || board[a][b-1] == "b" || board[a][b-1] == "k" || board[a][b-1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a;
+	name->newb = b-1;
+	list.push_back(name);
+      }
+    }
+    if(b+1 < 8){
+      if((board[a][b+1] == "x" || board[a][b+1] == "p" || board[a][b+1] == "r" || board[a][b+1] == "b" || board[a][b+1] == "k" || board[a][b+1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a;
+	name->newb = b+1;
+	list.push_back(name);
+      }
+    }
+    if(a-1 > -1 && b-1 > -1){
+      if((board[a-1][b-1] == "x" || board[a-1][b-1] == "p" || board[a-1][b-1] == "r" || board[a-1][b-1] == "b" || board[a-1][b-1] == "k" || board[a-1][b-1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-1;
+	name->newb = b-1;
+	list.push_back(name);
+      }
+    }
+    if(a-1 > -1){
+      if((board[a-1][b] == "x" || board[a-1][b] == "p" || board[a-1][b] == "r" || board[a-1][b] == "b" || board[a-1][b] == "k" || board[a-1][b] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-1;
+	name->newb = b;
+	list.push_back(name);
+      }
+    }
+    if(a-1 > -1 && b+1 < 8){
+      if((board[a-1][b+1] == "x" || board[a-1][b+1] == "p" || board[a-1][b+1] == "r" || board[a-1][b+1] == "b" || board[a-1][b+1] == "k" || board[a-1][b+1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-1;
+	name->newb = b+1;
+	list.push_back(name);
+      }
     }
   }
-  if(a+1 < 8){
-    if((board[a+1][b] == "x" || board[a+1][b] == "p" || board[a+1][b] == "r" || board[a+1][b] == "b" || board[a+1][b] == "k" || board[a+1][b] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+1;
-      name->newb = b;
-      list.push_back(name);
-    }
-  }
-  if(a+1 < 8 && b+1 < 8){
-    if((board[a+1][b+1] == "x" || board[a+1][b+1] == "p" || board[a+1][b+1] == "r" || board[a+1][b+1] == "b" || board[a+1][b+1] == "k" || board[a+1][b+1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+1;
-      name->newb = b+1;
-      list.push_back(name);
-    }
-  }
-  if(b-1 > -1){
-    if((board[a][b-1] == "x" || board[a][b-1] == "p" || board[a][b-1] == "r" || board[a][b-1] == "b" || board[a][b-1] == "k" || board[a][b-1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a;
-      name->newb = b-1;
-      list.push_back(name);
-    }
-  }
-  if(b+1 < 8){
-    if((board[a][b+1] == "x" || board[a][b+1] == "p" || board[a][b+1] == "r" || board[a][b+1] == "b" || board[a][b+1] == "k" || board[a][b+1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a;
-      name->newb = b+1;
-      list.push_back(name);
-    }
-  }
-  if(a-1 > -1 && b-1 > -1){
-    if((board[a-1][b-1] == "x" || board[a-1][b-1] == "p" || board[a-1][b-1] == "r" || board[a-1][b-1] == "b" || board[a-1][b-1] == "k" || board[a-1][b-1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a-1;
-      name->newb = b-1;
-      list.push_back(name);
-    }
-  }
-  if(a-1 > -1){
-    if((board[a-1][b] == "x" || board[a-1][b] == "p" || board[a-1][b] == "r" || board[a-1][b] == "b" || board[a-1][b] == "k" || board[a-1][b] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a-1;
-      name->newb = b;
-      list.push_back(name);
-    }
-  }
-  if(a-1 > -1 && b+1 < 8){
-    if((board[a-1][b+1] == "x" || board[a-1][b+1] == "p" || board[a-1][b+1] == "r" || board[a-1][b+1] == "b" || board[a-1][b+1] == "k" || board[a-1][b+1] == "q") && KingSafe()){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a-1;
-      name->newb = b+1;
-      list.push_back(name);
-    }
+  else if(turn == 1){
+    //everything above but with capital letter pieces
   }
   //castling
 }
-//moves for the knight
+//HAVE TO MAKE IT WORK FOR BLACK PIECES
 void Knight(int a,int b, vector<Node*> &list){
-  if(a+2 < 8 && b-1 > -1){
-    if(board[a+2][b-1] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+2;
-      name->newb = b-1;
-      list.push_back(name);
+  if(turn == 0){
+    if(a+2 < 8 && b-1 > -1){
+      if((board[a+2][b-1] == "x" || board[a+2][b-1] == "p" || board[a+2][b-1] == "r" || board[a+2][b-1] == "b" || board[a+2][b-1] == "k" || board[a+2][b-1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+2;
+	name->newb = b-1;
+	list.push_back(name);
+      }
+    }
+    if(a+2 < 8 && b+1 < 8){
+      if((board[a+2][b+1] == "x" || board[a+2][b+1] == "p" || board[a+2][b+1] == "r" || board[a+2][b+1] == "b" || board[a+2][b+1] == "k" || board[a+2][b+1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+2;
+	name->newb = b+1;
+	list.push_back(name);
+      }
+    }
+    if(a+1 < 8 && b-2 > -1){
+      if((board[a+1][b-2] == "x" || board[a+1][b-2] == "p" || board[a+1][b-2] == "r" || board[a+1][b-2] == "b" || board[a+1][b-2] == "k" || board[a+1][b-2] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+1;
+	name->newb = b-2;
+	list.push_back(name);
+      }
+    }
+    if(a+1 < 8 && b+2 < 8){
+      if((board[a+1][b+2] == "x" || board[a+1][b+2] == "p" || board[a+1][b+2] == "r" || board[a+1][b+2] == "b" || board[a+1][b+2] == "k" || board[a+1][b+2] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+1;
+	name->newb = b+2;
+	list.push_back(name);
+      }
+    }
+    if(a-2 > -1 && b-1 > -1){
+      if((board[a-2][b-1] == "x" || board[a-2][b-1] == "p" || board[a-2][b-1] == "r" || board[a-2][b-1] == "b" || board[a-2][b-1] == "k" || board[a-2][b-1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-2;
+	name->newb = b-1;
+	list.push_back(name);
+      }
+    }
+    if(a-2 > -1 && b+1 < 8){
+      if((board[a-2][b+1] == "x" || board[a-2][b+1] == "p" || board[a-2][b+1] == "r" || board[a-2][b+1] == "b" || board[a-2][b+1] == "k" || board[a-2][b+1] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-2;
+	name->newb = b+1;
+	list.push_back(name);
+      }
+    }
+    if(a-1 > -1 && b-2 > -1){
+      if((board[a-1][b-2] == "x" || board[a-1][b-2] == "p" || board[a-1][b-2] == "r" || board[a-1][b-2] == "b" || board[a-1][b-2] == "k" || board[a-1][b-2] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-1;
+	name->newb = b-2;
+	list.push_back(name);
+      }
+    }
+    if(a-1 > -1 && b+2 < 8){
+      if((board[a-1][b+2] == "x" || board[a-1][b+2] == "p" || board[a-1][b+2] == "r" || board[a-1][b+2] == "b" || board[a-1][b+2] == "k" || board[a-1][b+2] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-1;
+	name->newb = b+2;
+	list.push_back(name);
+      }
     }
   }
-  if(a+2 < 8 && b+1 < 8){
-    if(board[a+2][b+1] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+2;
-      name->newb = b+1;
-      list.push_back(name);
-    }
+  else if(turn == 1){
+    
   }
-  if(a+1 < 8 && b-2 > -1){
-    if(board[a+1][b-2] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+1;
-      name->newb = b-2;
-      list.push_back(name);
-    }
-  }
-  if(a+1 < 8 && b+2 < 8){
-    if(board[a+1][b+2] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+1;
-      name->newb = b+2;
-      list.push_back(name);
-    }
-  }
-  //below
-  /*
-  if(board[a-2][b-1] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-2;
-    name->newb = b-1;
-    list.push_back(name);
-  }
-  if(board[a-2][b+1] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-2;
-    name->newb = b+1;
-    list.push_back(name);
-  }
-  if(board[a-1][b-2] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-1;
-    name->newb = b-2;
-    list.push_back(name);
-  }
-  if(board[a-1][b+2] == "x"){
-    Node* name = new Node();
-    name->a = a;
-    name->b = b;
-    name->newa = a-1;
-    name->newb = b-2;
-    list.push_back(name);
-  }
-  */
 }
-//Rook movement
+//WORKS EXCEPT FOR BLACK PIECES
 void Rook(int a, int b, vector<Node*> &list){
-  //up
-  for(int i = 1;i < 8;i++){
-    if(a+i == 8){
-      break;
+  if(turn == 0){
+    //up
+    for(int i = 1;i < 8;i++){
+      if(a+i == 8){
+	break;
+      }
+      if((board[a+i][b] == "x" || board[a+i][b] == "p" || board[a+1][b] == "r" || board[a+i][b] == "b" || board[a+i][b] == "k" || board[a+i][b] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a+i;
+	name->newb = b;
+	list.push_back(name);
+      }
+      else{
+	break;
+      }
+      //else if(){} if it is a enemy piece then we can take it
     }
-    if(board[a+i][b] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a+i;
-      name->newb = b;
-      list.push_back(name);
+    //down
+    for(int i = 1;i < 8;i++){
+      if(a-i == -1){
+	break;
+      }
+      if((board[a-i][b] == "x" || board[a-i][b] == "p" || board[a-1][b] == "r" || board[a-i][b] == "b" || board[a-i][b] == "k" || board[a-i][b] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a-i;
+	name->newb = b;
+	list.push_back(name);
+      }
+      else{
+	break;
+      }
     }
-    else{
-      break;
+    //left and right
+    for(int i = 1;i < 8;i++){
+      if(b+i == 8){
+	break;
+      }
+      if((board[a][b+i] == "x" || board[a][b+i] == "p" || board[a][b+i] == "r" || board[a][b+i] == "b" || board[a][b+i] == "k" || board[a][b+i] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a;
+	name->newb = b+i;
+	list.push_back(name);
+      }
+      else{
+	break;
+      }
     }
-    //else if(){} if it is a enemy piece then we can take it
+    for(int i = 1;i < 8;i++){
+      if(b-i == -1){
+	break;
+      }
+      if((board[a][b-i] == "x" || board[a][b-i] == "p" || board[a][b-i] == "r" || board[a][b-i] == "b" || board[a][b-i] == "k" || board[a][b-i] == "q") && KingSafe()){
+	Node* name = new Node();
+	name->a = a;
+	name->b = b;
+	name->newa = a;
+	name->newb = b-i;
+	list.push_back(name);
+      }
+      else{
+	break;
+      }
+    }
   }
-  //down
-  for(int i = 1;i < 8;i++){
-    if(a-i == -1){
-      break;
-    }
-    if(board[a-i][b] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a-i;
-      name->newb = b;
-      list.push_back(name);
-    }
-    else{
-      break;
-    }
+  else if(turn == 1){
+    
   }
-  //left and right
-  for(int i = 1;i < 8;i++){
-    if(b+i == 8){
-      break;
-    }
-    if(board[a][b+i] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a;
-      name->newb = b+i;
-      list.push_back(name);
-    }
-    else{
-      break;
-    }
-  }
-  for(int i = 1;i < 8;i++){
-    if(b-i == -1){
-      break;
-    }
-    if(board[a][b-i] == "x"){
-      Node* name = new Node();
-      name->a = a;
-      name->b = b;
-      name->newa = a;
-      name->newb = b-i;
-      list.push_back(name);
-    }
-    else{
-      break;
-    }
-  }  
 }
 //bishop possible moves
 void Bishop(int a, int b, vector<Node*> &list){
