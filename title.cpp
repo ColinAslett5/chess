@@ -2,7 +2,7 @@
 #include <vector>
 using namespace std;
 string board[8][8];
-int turn = 1;//0 is white, 1 is black
+int turn = 0;//0 is white, 1 is black
 void setup();
 struct Node{//a new node will be put in the vector for every move possible
   int a;//original position a
@@ -21,7 +21,7 @@ void Queen(int i,int b, vector<Node*> &list);
 void print(vector<Node*> list);
 bool KingSafe(int a, int b, int c, int d);
 void MakeMove(int a, int b, int c, int d);//makes the move
-void UndoMove(int a, int b, int c, int d);//undo's the last move
+void UndoMove(int a, int b, int c, int d, string temp);//undo's the last move
 void Outlay();//prints out the board
 int main(){
   setup();
@@ -35,8 +35,9 @@ void print(vector<Node*> list){//if there are no moves then we have to check for
   int size = list.size();
   for(int i = 0;i < size;i++){
     cout << list[i]->a << list[i]->b << list[i]->newa << list[i]->newb << endl;
+    string temp = board[list[i]->newa][list[i]->newb];
     MakeMove(list[i]->a,list[i]->b,list[i]->newa,list[i]->newb);
-    UndoMove(list[i]->a,list[i]->b,list[i]->newa,list[i]->newb);
+    UndoMove(list[i]->a,list[i]->b,list[i]->newa,list[i]->newb,temp);
   }
 }
 //prints out the board
@@ -51,19 +52,40 @@ void Outlay(){
     cout << endl;
   }
 }
-//makes the move
+//FIXED
 void MakeMove(int a, int b, int c, int d){
   board[c][d] = board[a][b];
   board[a][b] = "x";
 }
-//undo's the MakeMove function
-void UndoMove(int a, int b, int c, int d){
+//FIXED
+void UndoMove(int a, int b, int c, int d, string temp){
   board[a][b] = board[c][d];
-  board[c][d] = "x";
+  board[c][d] = temp;
 }
 //is the king going to be in check
 bool KingSafe(int a, int b, int c, int d){
-  if(turn == 0){}
+  if(turn == 0){
+    int king_a;
+    int king_b;
+    //finding the king
+    for(int i = 0;i < 8;i++){
+      for(int f = 0;f < 8;f++){
+	if(board[i][f] == "A"){
+	  king_a = i;
+	  king_b = f;
+	}
+      }
+    }
+    //Make the Move
+    string temp = board[c][d];
+    board[c][d] = board[a][b];
+    board[a][b] = "x";
+    //bishop/queen
+    int tempx = 1;
+    //Undo the Move
+    board[a][b] = board[c][d];
+    board[c][d] = temp;
+  }
   else if(turn == 1){}
   return true;
 }
@@ -95,7 +117,7 @@ void setup(){
   board[7][2] = "b";
   board[7][3] = "q";
   board[7][4] = "a";
-  board[7][5] = "b";
+  board[2][6] = "b";
   board[7][6] = "k";
   board[7][7] = "r";
 }
@@ -120,12 +142,12 @@ vector<Node*> PossibleMoves(){
 	  //King(i,b,list);
 	}
 	if(board[i][b] == "P"){
-	  //Pawn(i,b,list);
+	  Pawn(i,b,list);
 	}
       }
       else if(turn == 1){//blacks turn
         if(board[i][b] == "r"){
-          Rook(i,b,list);
+          //Rook(i,b,list);
         }
         if(board[i][b] == "k"){
           //Knight(i,b,list);
